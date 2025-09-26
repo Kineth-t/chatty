@@ -55,4 +55,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
         // Returns false to indicate that default converters should still be registered alongside the custom one
         return false;
     }
+    // Without this configuration:
+    // Client sends: {"message": "Hello", "user": "John"}
+    // Server receives: Raw string (can't use it easily)
+
+    // With this configuration:
+
+    // Client sends: {"message": "Hello", "user": "John"}
+    // Server receives: Automatically converted to your ChatMessage Java object
+    // Your controller method can directly use: chatMessage.getMessage() and chatMessage.getUser()
 }
