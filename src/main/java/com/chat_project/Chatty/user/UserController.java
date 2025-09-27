@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
     private final UserService userService;
 
-    @MessageMapping("/user.addUser")
-    @SendTo("/user/topic")
-    public User addUser(@Payload User user) {
+    @MessageMapping("/user.addUser") // WebSocket listening on user.addUser
+    @SendTo("/user/topic") // Sends the resulting user object to all subscribers of /user/topic
+    public User addUser(@Payload User user) { // Deserialises the WebSocket message payload into a User object
         userService.saveUser(user);
         return user;
     }
@@ -34,7 +34,11 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> findConnectedUsers() {
+        // Responds with HTTP 200 (OK) and the list of users
         return ResponseEntity.ok(userService.findConnectedUser());
     } 
     
 }
+
+// Client sends a message to /app/user.addUser → User is saved → Broadcasted to /user/topic.
+// Client sends a message to /app/user.disconnectUser → User is marked disconnected → Broadcasted to /user/topic.
