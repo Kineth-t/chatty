@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
 
-    Optional<String> findBySenderAndRecipient(String sender, String recipient);
+    Optional<ChatRoom> findBySenderAndRecipient(String sender, String recipient);
 }
