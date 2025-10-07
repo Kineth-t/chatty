@@ -1,11 +1,10 @@
-package com.chat_project.chat;
+package com.chat_project.Chatty.chat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.chat_project.chatroom.ChatRoomService;
+import com.chat_project.Chatty.chatroom.ChatRoomService;
 
 import lombok.RequiredArgsConstructor;
 

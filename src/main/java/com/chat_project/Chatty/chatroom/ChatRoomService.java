@@ -1,4 +1,4 @@
-package com.chat_project.chatroom;
+package com.chat_project.Chatty.chatroom;
 
 import java.util.Optional;
 

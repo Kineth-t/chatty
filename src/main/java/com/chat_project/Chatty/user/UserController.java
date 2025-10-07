@@ -19,14 +19,14 @@ public class UserController {
     private final UserService userService;
 
     @MessageMapping("/user.addUser") // WebSocket listening on user.addUser
-    @SendTo("/topic/public") // Sends the resulting user object to all subscribers of /user/topic
+    @SendTo("/topic/user") // Sends the resulting user object to all subscribers of /user/topic
     public User addUser(@Payload User user) { // Deserialises the WebSocket message payload into a User object
         userService.saveUser(user);
         return user;
     }
 
     @MessageMapping("/user.disconnectUser")
-    @SendTo("/topic/public")
+    @SendTo("/topic/user")
     public User disconnect(@Payload User user) {
         userService.disconnect(user);
         return user;

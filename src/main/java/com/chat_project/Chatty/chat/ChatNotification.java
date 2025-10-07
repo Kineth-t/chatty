@@ -1,9 +1,4 @@
-package com.chat_project.chat;
-
-import java.util.Date;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+package com.chat_project.Chatty.chat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,13 +11,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document
-public class ChatMessage {
-    @Id
+public class ChatNotification {
     private String id;
-    private String chatId;
     private String sender;
     private String recipient;
     private String content;
-    private Date timestamp;
 }

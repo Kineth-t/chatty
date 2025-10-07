@@ -1,6 +1,5 @@
-package com.chat_project.chat;
+package com.chat_project.Chatty.chat;
 
-import java.net.http.WebSocket;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;

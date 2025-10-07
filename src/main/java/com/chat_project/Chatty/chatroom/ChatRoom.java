@@ -1,4 +1,7 @@
-package com.chat_project.chat;
+package com.chat_project.Chatty.chatroom;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +14,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatNotification {
+@Document
+public class ChatRoom {
+    @Id
     private String id;
+    private String chatId;
     private String sender;
     private String recipient;
-    private String content;
 }

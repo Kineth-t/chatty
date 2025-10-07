@@ -1,4 +1,4 @@
-package com.chat_project.chat;
+package com.chat_project.Chatty.chat;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
