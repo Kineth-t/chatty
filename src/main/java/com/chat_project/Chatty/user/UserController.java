@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
@@ -36,6 +38,14 @@ public class UserController {
         // Responds with HTTP 200 (OK) and the list of users
         return ResponseEntity.ok(userService.findConnectedUser());
     } 
+
+    // TEMPORARY TEST ENDPOINT to check if http is working
+    // @PostMapping("/users/test")
+    // public ResponseEntity<User> testAddUser(@RequestBody User user) {
+    //     // log.info("HTTP TEST: Adding user: {}", user.getUsername());
+    //     userService.saveUser(user);
+    //     return ResponseEntity.ok(user);
+    // }
     
 }
 
