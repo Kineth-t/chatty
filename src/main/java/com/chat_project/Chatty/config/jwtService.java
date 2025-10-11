@@ -2,8 +2,6 @@ package com.chat_project.Chatty.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,13 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import javax.crypto.SecretKey;
 
 @Service
 public class JwtService {
@@ -56,13 +51,13 @@ public class JwtService {
             long expiration
     ) {
         return Jwts
-                .builder()
-                .claims(extraClaims)
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignInKey())
-                .compact();
+                .builder() // Starts building a new JWT
+                .claims(extraClaims) // Adds extra key-value data into the token
+                .subject(userDetails.getUsername()) // Sets the subject field (useing username)
+                .issuedAt(new Date(System.currentTimeMillis())) // Adds the timestamp when the token was created
+                .expiration(new Date(System.currentTimeMillis() + expiration)) // Adds expiration date/time
+                .signWith(getSignInKey()) // Signs the JWT using the HMAC key derived from your secret
+                .compact(); // Finalises and returns the token as a compact String
     }
 
     // Validate token
@@ -84,15 +79,18 @@ public class JwtService {
     // Extract all claims from token
     private Claims extractAllClaims(String token) {
         return Jwts
-            .parser()
-            .verifyWith(getSignInKey())
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
+            .parser() // Creates a parser instance
+            .verifyWith(getSignInKey()) // Ensures the signature is valid
+            .build() // Builds the parser
+            .parseSignedClaims(token) // Parses the JWT string
+            .getPayload(); // Retrieves the claims body
     }
 
     // Get signing key from secret
     private SecretKey getSignInKey() {
+        // Converts your secret string into a SecretKey for HMAC-SHA signing
+        // Keys.hmacShaKeyFor(...) ensures the key is correctly formatted and strong enough
+        // UTF-8 encoding is used to convert the secret text into bytes
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 }
