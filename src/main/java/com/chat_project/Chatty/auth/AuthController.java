@@ -17,6 +17,7 @@ public class AuthController {
     @Value("${jwt.expiration:86400000}")
     private long jwtExpiration;
 
+    // Creates new user, returns HttpOnly cookie
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(
             @RequestBody RegisterRequest request,
@@ -24,11 +25,11 @@ public class AuthController {
     ) {
         AuthResponse authResponse = authService.register(request);
         
-        // Create HttpOnly cookie with token
+        // Create HttpOnly cookie with JWT token
         Cookie cookie = new Cookie("token", authResponse.getToken());
-        cookie.setHttpOnly(true);  // Cannot be accessed by JavaScript
-        cookie.setSecure(false);   // Set to true in production (HTTPS only)
-        cookie.setPath("/");       // Available for all paths
+        cookie.setHttpOnly(true);   // JavaScript cannot access
+        cookie.setSecure(false);    // Set true for HTTPS in production
+        cookie.setPath("/");        // Available for all paths
         cookie.setMaxAge((int) (jwtExpiration / 1000)); // 24 hours
         cookie.setAttribute("SameSite", "Lax"); // CSRF protection
         
@@ -38,11 +39,11 @@ public class AuthController {
         return ResponseEntity.ok(AuthResponse.builder()
                 .username(authResponse.getUsername())
                 .email(authResponse.getEmail())
-                .fullName(authResponse.getFullName())
                 .message("Registration successful")
                 .build());
     }
 
+    // Authenticates user, returns HttpOnly cookie
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
             @RequestBody LoginRequest request,
@@ -50,10 +51,10 @@ public class AuthController {
     ) {
         AuthResponse authResponse = authService.login(request);
         
-        // Create HttpOnly cookie with token
+        // Create HttpOnly cookie with JWT token
         Cookie cookie = new Cookie("token", authResponse.getToken());
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);   // Set to true in production
+        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge((int) (jwtExpiration / 1000));
         cookie.setAttribute("SameSite", "Lax");
@@ -69,18 +70,19 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
-        // Delete the cookie
+        // Delete the cookie by setting maxAge to 0
         Cookie cookie = new Cookie("token", null);
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
         cookie.setPath("/");
-        cookie.setMaxAge(0);  // Delete immediately
+        cookie.setMaxAge(0);
         
         response.addCookie(cookie);
         
         return ResponseEntity.ok("Logged out successfully");
     }
     
+    // Gets current user from cookie (for page refresh)
     @GetMapping("/me")
     public ResponseEntity<AuthResponse> getCurrentUser(
             @CookieValue(name = "token", required = false) String token
