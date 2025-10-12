@@ -22,37 +22,58 @@ import com.chat_project.Chatty.user.UserRepository;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final UserRepository userRepository;
+    private final JwtAuthenticationFilter jwtAuthFilter; // Custom filter that intercepts requests to validate JWT tokens
+    private final UserRepository userRepository; // Repository to access user data from the database
 
+    /*
+     * Defines how to load user details from the database
+     * Spring Security uses this to authenticate users during login
+     * @return UserDetailsService implementation that fetches users by username
+     */
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
+    /*
+     * Exposes the AuthenticationManager as a bean
+     * Used by the authentication controller to authenticate user credentials
+     * @param config Spring's authentication configuration
+     * @return AuthenticationManager instance
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    // Password encoder for hashing passwords
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /*
+     * Main security configuration - defines the security rules for the application
+     * Configures JWT-based stateless authentication
+     * @param http HttpSecurity object to configure security settings
+     * @return Configured SecurityFilterChain
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
+                .csrf(csrf -> csrf.disable()) // Disable CSRF protection (not needed for stateless JWT authentication)
+                .cors(cors -> cors.disable()) // Disable CORS (enable and configure if frontend is on different domain)
+                // Configure authorisation rules for different endpoints
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/ws/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**", "/ws/**").permitAll() // Allow public access to authentication endpoints and WebSocket connections
+                        .anyRequest().authenticated() // All other endpoints require authentication
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use stateless session management (no sessions stored on server)
                 )
+                // Add JWT filter before the standard username/password authentication filter
+                // This ensures JWT tokens are checked first on every request
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
