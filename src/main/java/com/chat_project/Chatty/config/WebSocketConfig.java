@@ -50,6 +50,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .withSockJS();
     }
 
+    // configureMessageBroker():
+    // /topic: Broadcast channel (all users)
+    // /user: Private channel (specific user)
+    // /app: Prefix for client-to-server messages
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {
